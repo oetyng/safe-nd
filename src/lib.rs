@@ -40,7 +40,7 @@ mod response;
 mod shared_types;
 mod utils;
 
-pub use coins::{Coins, MAX_COINS_VALUE};
+pub use coins::Coins;
 pub use data::access_control::{
     AccessList, AccessType, PrivateAccessList, PrivateUserAccess, PublicAccessList,
     PublicUserAccess,
@@ -48,6 +48,7 @@ pub use data::access_control::{
 pub use data::{
     AppendOperation, PrivateSequence, PublicSequence, Sequence, SequenceEntry, SequenceValues,
 };
+
 pub use errors::{EntryError, Error, Result};
 pub use identity::{
     app::{FullId as AppFullId, PublicId as AppPublicId},
@@ -187,15 +188,6 @@ impl Distribution<XorName> for Standard {
     }
 }
 
-/// Connection information for a node in a section.
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
-pub struct ConnectionInfo {
-    /// Endpoint of the node
-    pub peer_addr: SocketAddr,
-    /// Certificate of the node
-    pub peer_cert_der: Vec<u8>,
-}
-
 /// Wrapper message that contains a message ID and the requester ID along the request or response.
 /// It should also contain a valid signature if it's sent by the owner(s).
 #[allow(clippy::large_enum_variant)]
@@ -275,9 +267,9 @@ pub enum HandshakeRequest {
 pub enum HandshakeResponse {
     /// Sent by nodes when a client should attempt to connect to the section that's closest to
     /// its destination (section managing the client's account).
-    Rebootstrap(Vec<(XorName, ConnectionInfo)>),
+    Rebootstrap(Vec<(XorName, SocketAddr)>),
     /// Sent by nodes when a client reaches its destination section.
-    Join(Vec<(XorName, ConnectionInfo)>),
+    Join(Vec<(XorName, SocketAddr)>),
     /// Sent by nodes as a response to a valid `HandshakeRequest::Join`.
     Challenge(PublicId, Vec<u8>),
     /// Sent by nodes as a response to an invalid `HandshakeRequest::Join` (when a client attempts to join a wrong section).
