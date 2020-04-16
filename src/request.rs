@@ -256,8 +256,6 @@ pub enum Request {
         new_owner: PublicKey,
         /// The new balance amount in coins.
         amount: Coins,
-        /// The ID of the transaction.
-        transaction_id: TransactionId,
         /// The new login packet.
         new_login_packet: LoginPacket,
     },

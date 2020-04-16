@@ -281,7 +281,7 @@ pub enum HandshakeResponse {
 }
 
 /// Transaction ID.
-pub type TransactionId = u64; // TODO: Use the trait UUID
+pub type TransactionId = MessageId;
 
 /// Coin transaction.
 #[derive(Copy, Clone, Hash, Eq, PartialEq, PartialOrd, Ord, Serialize, Deserialize, Debug)]
