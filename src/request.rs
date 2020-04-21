@@ -12,8 +12,8 @@ mod login_packet;
 pub use self::login_packet::{LoginPacket, MAX_LOGIN_PACKET_BYTES};
 use crate::{
     AData, ADataAddress, ADataAppendOperation, ADataIndex, ADataOwner, ADataPubPermissions,
-    ADataUnpubPermissions, ADataUser, AppPermissions, Coins, Error, IData, IDataAddress, MData,
-    MDataAddress, MDataEntryActions, MDataPermissionSet, PublicKey, Response, TransactionId,
+    ADataUnpubPermissions, ADataUser, AppPermissions, Error, IData, IDataAddress, MData,
+    MDataAddress, MDataEntryActions, MDataPermissionSet, Money, PublicKey, Response, //Signature,
     XorName,
 };
 use serde::{Deserialize, Serialize};
@@ -223,39 +223,56 @@ pub enum Request {
     /// Append unsequenced AppendOnlyData.
     AppendUnseq(ADataAppendOperation),
     //
-    // ===== Coins =====
+    // ===== Money =====
     //
-    /// Balance transfer.
-    TransferCoins {
+    /// Money transfer.
+    TransferMoney {
         /// The destination to transfer to.
-        destination: XorName,
-        /// The amount in coins to transfer.
-        amount: Coins,
-        /// The ID of the transaction.
-        transaction_id: TransactionId,
+        from: PublicKey,
+        /// The destination to transfer to.
+        to: PublicKey,
+        /// The amount to transfer.
+        amount: Money,
+        // /// A signature over the transfer.
+        // signature: Signature,
     },
-    /// Get current wallet balance.
-    GetBalance,
+    /// Last part of a money transfer.
+    DepositMoney {
+        /// The destination to transfer to.
+        from: PublicKey,
+        /// The destination to transfer to.
+        to: PublicKey,
+        /// The amount to transfer.
+        amount: Money,
+        /// Is this for a new account?
+        new_account: bool,
+        // /// A signature over the transfer.
+        // signature: Signature,
+    },
+    /// Get account balance.
+    GetBalance(PublicKey),
     /// Create a new coin balance.
     CreateBalance {
-        /// The new owner of the balance.
-        new_balance_owner: PublicKey,
-        /// The new balance amount in coins.
-        amount: Coins,
-        /// The ID of the transaction.
-        transaction_id: TransactionId,
+        /// Source of any initial balance.
+        from: PublicKey,
+        /// Owner of the balance.
+        to: PublicKey,
+        /// The initial balance.
+        amount: Money,
+        // /// A signature over the transfer.
+        // signature: Signature,
     },
     //
     // ===== Login Packet =====
     //
     /// Create a login packet.
     CreateLoginPacket(LoginPacket),
-    /// Create a login packet for a given user and transfer some initial coins.
+    /// Create a login packet for a given user and transfer some initial money.
     CreateLoginPacketFor {
         /// The new owner of the login packet.
         new_owner: PublicKey,
-        /// The new balance amount in coins.
-        amount: Coins,
+        /// The initial balance.
+        amount: Money,
         /// The new login packet.
         new_login_packet: LoginPacket,
     },
@@ -333,8 +350,8 @@ impl Request {
             | ListMDataPermissions(_)
                 | ListMDataUserPermissions { .. } => Type::PrivateGet,
 
-            // Coins
-            GetBalance |
+            // Money
+            GetBalance(_) |
             // Login packet
             GetLoginPacket(..) |
             // Client (Owner) to SrcElders
@@ -342,8 +359,8 @@ impl Request {
 
             // Transaction
 
-            // Coins
-            TransferCoins { .. } | CreateBalance { .. } |
+            // Money
+            TransferMoney { .. } | DepositMoney { .. } | CreateBalance { .. } |
             // Login Packet
             CreateLoginPacketFor { .. } => {
                 Type::Transaction
@@ -408,8 +425,8 @@ impl Request {
                 Response::GetUnpubADataUserPermissions(Err(error))
             }
             GetADataOwners { .. } => Response::GetADataOwners(Err(error)),
-            // Coins
-            GetBalance => Response::GetBalance(Err(error)),
+            // Money
+            GetBalance(_) => Response::GetBalance(Err(error)),
             // Login Packet
             GetLoginPacket(..) => Response::GetLoginPacket(Err(error)),
             // Client (Owner) to SrcElders
@@ -417,10 +434,10 @@ impl Request {
 
             // Transaction
 
-            // Coins
-            TransferCoins { .. } | CreateBalance { .. }
+            // Money
+            TransferMoney { .. } | DepositMoney { .. } | CreateBalance { .. }
             // Login Packet
-            | CreateLoginPacketFor { .. } => Response::Transaction(Err(error)),
+            | CreateLoginPacketFor { .. } => Response::MoneyReceipt(Err(error)),
 
             // Mutation
 
@@ -497,9 +514,10 @@ impl fmt::Debug for Request {
                 SetADataOwner { .. } => "SetADataOwner",
                 AppendSeq { .. } => "AppendSeq",
                 AppendUnseq(_) => "AppendUnseq",
-                // Coins
-                TransferCoins { .. } => "TransferCoins",
-                GetBalance => "GetBalance",
+                // Money
+                TransferMoney { .. } => "TransferMoney",
+                DepositMoney { .. } => "DepositMoney",
+                GetBalance(_) => "GetBalance",
                 CreateBalance { .. } => "CreateBalance",
                 // Login Packet
                 CreateLoginPacket { .. } => "CreateLoginPacket",
