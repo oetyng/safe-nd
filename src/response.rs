@@ -10,8 +10,8 @@
 use crate::{
     errors::ErrorDebug, AData, ADataEntries, ADataEntry, ADataIndices, ADataOwner,
     ADataPermissions, ADataPubPermissionSet, ADataUnpubPermissionSet, AppPermissions, Error, IData,
-    MData, MDataEntries, MDataPermissionSet, MDataValue, MDataValues, Money, PublicKey, Result,
-    Signature, MoneyReceipt,
+    MData, MDataEntries, MDataPermissionSet, MDataValue, MDataValues, Money, MoneyReceipt,
+    PublicKey, Result, Signature,
 };
 use serde::{Deserialize, Serialize};
 use std::{

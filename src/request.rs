@@ -11,9 +11,26 @@ mod login_packet;
 
 pub use self::login_packet::{LoginPacket, MAX_LOGIN_PACKET_BYTES};
 use crate::{
-    AData, ADataAddress, ADataAppendOperation, ADataIndex, ADataOwner, ADataPubPermissions,
-    ADataUnpubPermissions, ADataUser, AppPermissions, Error, IData, IDataAddress, MData,
-    MDataAddress, MDataEntryActions, MDataPermissionSet, Money, PublicKey, Response, TransactionId, //Signature,
+    AData,
+    ADataAddress,
+    ADataAppendOperation,
+    ADataIndex,
+    ADataOwner,
+    ADataPubPermissions,
+    ADataUnpubPermissions,
+    ADataUser,
+    AppPermissions,
+    Error,
+    IData,
+    IDataAddress,
+    MData,
+    MDataAddress,
+    MDataEntryActions,
+    MDataPermissionSet,
+    Money,
+    PublicKey,
+    Response,
+    TransactionId, //Signature,
     XorName,
 };
 use serde::{Deserialize, Serialize};
@@ -265,6 +282,8 @@ pub enum Request {
         amount: Money,
         // /// A signature over the transfer.
         // signature: Signature,
+        /// Transaction id
+        transaction_id: Option<TransactionId>,
     },
     //
     // ===== Login Packet =====
@@ -279,6 +298,8 @@ pub enum Request {
         amount: Money,
         /// The new login packet.
         new_login_packet: LoginPacket,
+        /// Transaction id
+        transaction_id: TransactionId,
     },
     /// Update a login packet.
     UpdateLoginPacket(LoginPacket),
