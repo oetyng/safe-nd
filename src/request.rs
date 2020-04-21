@@ -245,9 +245,9 @@ pub enum Request {
     /// Money transfer.
     TransferMoney {
         /// The destination to transfer to.
-        from: PublicKey,
+        from: XorName,
         /// The destination to transfer to.
-        to: PublicKey,
+        to: XorName,
         /// The amount to transfer.
         amount: Money,
         // /// A signature over the transfer.
@@ -258,9 +258,9 @@ pub enum Request {
     /// Last part of a money transfer.
     DepositMoney {
         /// The destination to transfer to.
-        from: PublicKey,
+        from: XorName,
         /// The destination to transfer to.
-        to: PublicKey,
+        to: XorName,
         /// The amount to transfer.
         amount: Money,
         /// Is this for a new account?
@@ -271,13 +271,13 @@ pub enum Request {
         transaction_id: TransactionId,
     },
     /// Get account balance.
-    GetBalance(PublicKey),
+    GetBalance(XorName),
     /// Create a new coin balance.
     CreateBalance {
         /// Source of any initial balance.
-        from: PublicKey,
+        from: XorName,
         /// Owner of the balance.
-        to: PublicKey,
+        to: XorName,
         /// The initial balance.
         amount: Money,
         // /// A signature over the transfer.
@@ -293,7 +293,7 @@ pub enum Request {
     /// Create a login packet for a given user and transfer some initial money.
     CreateLoginPacketFor {
         /// The new owner of the login packet.
-        new_owner: PublicKey,
+        new_owner: XorName,
         /// The initial balance.
         amount: Money,
         /// The new login packet.
