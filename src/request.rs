@@ -13,7 +13,7 @@ pub use self::login_packet::{LoginPacket, MAX_LOGIN_PACKET_BYTES};
 use crate::{
     AData, ADataAddress, ADataAppendOperation, ADataIndex, ADataOwner, ADataPubPermissions,
     ADataUnpubPermissions, ADataUser, AppPermissions, Error, IData, IDataAddress, MData,
-    MDataAddress, MDataEntryActions, MDataPermissionSet, Money, PublicKey, Response, //Signature,
+    MDataAddress, MDataEntryActions, MDataPermissionSet, Money, PublicKey, Response, TransactionId, //Signature,
     XorName,
 };
 use serde::{Deserialize, Serialize};
@@ -235,6 +235,8 @@ pub enum Request {
         amount: Money,
         // /// A signature over the transfer.
         // signature: Signature,
+        /// Transaction id
+        transaction_id: TransactionId,
     },
     /// Last part of a money transfer.
     DepositMoney {
@@ -248,6 +250,8 @@ pub enum Request {
         new_account: bool,
         // /// A signature over the transfer.
         // signature: Signature,
+        /// Transaction id
+        transaction_id: TransactionId,
     },
     /// Get account balance.
     GetBalance(PublicKey),
