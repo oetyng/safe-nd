@@ -275,9 +275,9 @@ pub enum Request {
     /// Create a new coin balance.
     CreateBalance {
         /// Source of any initial balance.
-        from: XorName,
+        from: PublicKey,
         /// Owner of the balance.
-        to: XorName,
+        to: PublicKey,
         /// The initial balance.
         amount: Money,
         // /// A signature over the transfer.
@@ -293,7 +293,7 @@ pub enum Request {
     /// Create a login packet for a given user and transfer some initial money.
     CreateLoginPacketFor {
         /// The new owner of the login packet.
-        new_owner: XorName,
+        new_owner: PublicKey,
         /// The initial balance.
         amount: Money,
         /// The new login packet.
