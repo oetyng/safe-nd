@@ -265,8 +265,8 @@ pub enum Request {
         amount: Money,
         /// Is this for a new account?
         new_account: bool,
-        // /// A signature over the transfer.
-        // signature: Signature,
+        /// Seriliased proof of the client request. aka: TransferRequest Message, serialised. to be verified at recipient section
+        transfer_proof: Vec<u8>,
         /// Transaction id
         transaction_id: TransactionId,
     },
