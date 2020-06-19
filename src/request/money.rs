@@ -8,7 +8,7 @@
 // Software.
 
 use super::{AuthorisationKind, MiscAuthKind, MoneyAuthKind, Type};
-use crate::{DebitAgreementProof, Error, PublicKey, Response, SignedTransfer, Transfer, XorName};
+use crate::{AccountId, DebitAgreementProof, Error, Response, SignedTransfer, Transfer, XorName};
 use serde::{Deserialize, Serialize};
 use std::{borrow::Cow, fmt};
 
@@ -38,12 +38,12 @@ pub enum MoneyRequest {
         /// The cmd to register the consensused transfer.
         proof: DebitAgreementProof,
     },
-    /// Get key balance.
-    GetBalance(PublicKey),
-    /// Get key transfers since specified version.
+    /// Get account balance.
+    GetBalance(AccountId),
+    /// Get account transfers since specified version.
     GetHistory {
-        /// The balance key.
-        at: PublicKey,
+        /// The account id.
+        at: AccountId,
         /// The last version of transfers we know of.
         since_version: usize,
     },
@@ -98,21 +98,21 @@ impl MoneyRequest {
         use MoneyRequest::*;
         match self {
             PropagateTransfer { ref proof, .. } => Some(Cow::Owned(XorName::from(
-                proof.signed_transfer.transfer.to, // sent to section where credit is made
+                proof.to(), // sent to section where credit is made
             ))),
             RegisterTransfer { ref proof, .. } => Some(Cow::Owned(XorName::from(
-                proof.signed_transfer.transfer.id.actor, // this is handled where the debit is made
+                proof.from(), // this is handled where the debit is made
             ))),
             ValidateTransfer {
                 ref signed_transfer,
                 ..
             } => {
-                Some(Cow::Owned(XorName::from(signed_transfer.transfer.id.actor)))
+                Some(Cow::Owned(XorName::from(signed_transfer.from())))
                 // this is handled where the debit is made
             }
             #[cfg(feature = "simulated-payouts")]
             SimulatePayout { ref transfer, .. } => {
-                Some(Cow::Owned(XorName::from(transfer.id.actor)))
+                Some(Cow::Owned(XorName::from(transfer.from())))
                 // this is handled where the debit is made
             }
             GetBalance(_) => None,
