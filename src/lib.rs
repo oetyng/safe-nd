@@ -35,7 +35,6 @@ mod keys;
 mod map;
 mod messaging;
 mod money;
-mod rewards;
 mod sequence;
 mod transfer;
 mod utils;
@@ -74,7 +73,6 @@ pub use messaging::{
     TransientSectionKey, TryFromError, MAX_LOGIN_PACKET_BYTES,
 };
 pub use money::Money;
-pub use rewards::{RewardCounter, Work};
 
 pub use sequence::{
     Action as SequenceAction, Address as SequenceAddress, Data as Sequence,

@@ -7,8 +7,9 @@
 // specific language governing permissions and limitations relating to use of the SAFE Network
 // Software.
 
+use super::super::transfer::TransferAgreementProof;
 use super::{auth::AuthCmd, data::DataCmd, transfer::TransferCmd, AuthorisationKind};
-use crate::{DebitAgreementProof, XorName};
+use crate::XorName;
 use serde::{Deserialize, Serialize};
 
 /// TODO: docs
@@ -22,7 +23,7 @@ pub enum Cmd {
         ///
         cmd: DataCmd,
         ///
-        payment: DebitAgreementProof,
+        payment: TransferAgreementProof,
     },
     ///
     Transfer(TransferCmd),
