@@ -34,11 +34,9 @@ mod keys;
 mod map;
 /// Register data type
 pub mod register;
-mod rewards;
 mod section;
 mod sequence;
 mod token;
-mod transfer;
 mod utils;
 
 pub use blob::{
@@ -58,7 +56,6 @@ pub use map::{
     UnseqEntries as MapUnseqEntries, UnseqEntryAction as MapUnseqEntryAction,
     UnseqEntryActions as MapUnseqEntryActions, Value as MapValue, Values as MapValues,
 };
-pub use rewards::{AccumulatingReward, NodeAge, RewardAccumulation, RewardProposal};
 pub use section::SectionElders;
 pub use sequence::{
     Action as SequenceAction, Address as SequenceAddress, Data as Sequence, DataOp as SequenceOp,
@@ -69,12 +66,15 @@ pub use sequence::{
     PublicPolicy as SequencePublicPolicy, PublicSeqData, User as SequenceUser,
 };
 pub use token::Token;
-pub use transfer::*;
 
 use register::{Address as RegisterAddress, Register};
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 use xor_name::XorName;
+
+/// Node age, the number of times
+/// the node has been relocated between sections.
+pub type NodeAge = u8;
 
 /// Object storing a data variant.
 #[allow(clippy::large_enum_variant)]
